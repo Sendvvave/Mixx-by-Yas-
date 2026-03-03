@@ -1,0 +1,13 @@
+
+{
+  "name": "yas-landing-page",
+  "version": "1.0.0",
+  "description": "Single landing page with backend admin view",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
